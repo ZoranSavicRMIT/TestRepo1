@@ -1,0 +1,139 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+  <POU Name="MAIN" Id="{21da2244-018d-444a-95bb-341d673e2187}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM MAIN
+VAR
+	systemOk				AT %I* :BOOL;
+	estopPressed			AT %I* :BOOL;
+	safeGroupErrorReset  	AT %Q* :BOOL;
+	doorUnlock_But		 	AT %Q* :BOOL;	
+	
+	SafetyResetPulse				: TP;
+	
+	Control							: fbControl;
+	InfeedConveyor					: fbInConveyor;
+	HousingDelivery					: fbHousingDelivery;
+	InsertPlacing					: fbInsertPlacing;
+	Handling						: fbHandling;
+	Pressing						: fbPressing;
+	
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[doorUnlock_But := HMI.DoorUnlockCmd;
+//gpb.estopOk := systemOk;
+
+//===============================================================================================
+// Safety reset at system startup
+//===============================================================================================
+SafetyResetPulse(IN:=TRUE, PT:= T#500MS , Q=>safeGroupErrorReset , ET=> );
+
+
+
+//===============================================================================================
+// Machine modes and status indication 
+//===============================================================================================
+
+Control(
+	SafetyOk:= SystemOk,
+	ResetCompleted := TRUE,
+	ResetCmd=> , 
+	AutoCycle=> , 
+	ManualMode=> , 
+	DoorUnlockCmd=> );
+
+//===============================================================================================
+// Infeed conveyor control  
+//===============================================================================================
+
+InfeedConveyor(
+	SafetyOk:= , 
+	ResetCmd:= , 
+	AutoCycle:= , 
+	ManualCmd:= , 
+	ResetCompleted=> );
+
+
+	
+	
+//===============================================================================================
+// Fitting station process control  
+//===============================================================================================
+
+HousingDelivery(
+	SafetyOk:= , 
+	ResetCmd:= , 
+	AutoCycle:= , 
+	ManualCmd:= , 
+	ResetCompleted=> );
+	
+InsertPlacing(
+	SafetyOk:= , 
+	ResetCmd:= , 
+	AutoCycle:= , 
+	ManualCmd:= , 
+	ResetCompleted=> );	
+
+	
+//===============================================================================================
+// Pressing station process control  
+//===============================================================================================	
+
+
+Handling(
+	SafetyOk:= , 
+	ResetCmd:= , 
+	AutoCycle:= , 
+	ManualCmd:= , 
+	ResetCompleted=> );
+
+
+Pressing(
+	SafetyOk:= , 
+	ResetCmd:= , 
+	AutoCycle:= , 
+	ManualCmd:= , 
+	ResetCompleted=> );
+
+
+
+
+	
+	
+	
+	
+	
+	
+]]></ST>
+    </Implementation>
+    <LineIds Name="MAIN">
+      <LineId Id="70" Count="12" />
+      <LineId Id="200" Count="0" />
+      <LineId Id="83" Count="6" />
+      <LineId Id="159" Count="0" />
+      <LineId Id="161" Count="2" />
+      <LineId Id="173" Count="0" />
+      <LineId Id="168" Count="4" />
+      <LineId Id="166" Count="0" />
+      <LineId Id="164" Count="0" />
+      <LineId Id="90" Count="0" />
+      <LineId Id="160" Count="0" />
+      <LineId Id="91" Count="4" />
+      <LineId Id="175" Count="4" />
+      <LineId Id="121" Count="0" />
+      <LineId Id="180" Count="0" />
+      <LineId Id="183" Count="4" />
+      <LineId Id="181" Count="0" />
+      <LineId Id="122" Count="5" />
+      <LineId Id="134" Count="0" />
+      <LineId Id="189" Count="4" />
+      <LineId Id="135" Count="2" />
+      <LineId Id="195" Count="4" />
+      <LineId Id="138" Count="0" />
+      <LineId Id="143" Count="0" />
+      <LineId Id="149" Count="7" />
+      <LineId Id="13" Count="0" />
+      <LineId Id="10" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

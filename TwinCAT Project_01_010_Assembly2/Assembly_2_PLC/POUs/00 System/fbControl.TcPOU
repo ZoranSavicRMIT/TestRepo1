@@ -1,0 +1,220 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.11">
+  <POU Name="fbControl" Id="{2491bfce-811c-4b69-9877-03afa69ff85a}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK fbControl
+VAR_INPUT
+	SafetyOk			: BOOL;
+	ServosEnable		: BOOL;
+	ResetCompleted		: BOOL;
+END_VAR
+VAR_OUTPUT
+	ResetCmd				: BOOL;
+	AutoCycle 				: BOOL;
+	ManualMode				: BOOL;
+	DoorUnlockCmd			: BOOL;
+	
+END_VAR
+VAR
+	// Operator Console	
+	StartPB				AT%I* : BOOL;
+	StopPB				AT%I* : BOOL;
+	ManualKeySW			AT%I* : BOOL;
+	ResetPB				AT%I* : BOOL;
+	DoorUnlockPB		AT%I* : BOOL;
+	StartIndicator		AT%Q* : BOOL;
+	ResetIndicator		AT%Q* : BOOL;
+	Q1Indicator			AT%Q* : BOOL;
+	Q2Indicator			AT%Q* : BOOL;
+	
+	// Signal tower
+	RedTower			AT%Q* : BOOL;
+	YellowTower			AT%Q* : BOOL;
+	GreenTower			AT%Q* : BOOL;
+	
+	PulseONTime			  		: TON;
+	PulseOFFTime			  	: TON;
+	ClockPulse					: BOOL;
+		
+	State 						: INT := 0;
+
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+//===============================================================================================
+// State machine 
+//===============================================================================================
+
+CASE State OF
+	
+0: // Estop 
+	ManualMode := 0;
+	ResetCmd := 0;
+	AutoCycle := 0;
+	
+	IF SafetyOk THEN
+		State := 1;
+	END_IF
+	
+	
+	
+1: 	// Automatic mode. Wait for Reset initiation.
+	// Allow switching to Manual mode.
+	ManualMode := 0;
+	ResetCmd := 0;
+	AutoCycle := 0;
+	
+	// Auto mode selected. Wait for reset/homing to be requested.
+	IF NOT ManualKeySW AND ResetPB THEN
+		State := 2;
+	END_IF
+	
+	// Manual mode selected
+	IF ManualKeySW THEN
+		State := 5;
+	END_IF
+
+
+2: 	// Automatic mode. Reset/homing requested. 
+	ResetCmd := 1;
+	
+	//Waiting for confirmation.
+	IF ResetCompleted THEN
+		State := 3;
+	END_IF
+
+
+3:	// Automatic mode. Wait for Automatic cycle request or Manual mode request. 	
+	ResetCmd := 0;
+	AutoCycle := 0;
+	
+	IF NOT ManualKeySW AND StartPB THEN
+		State := 4;
+	END_IF
+		
+	IF ManualKeySW THEN
+		State := 5;
+	END_IF
+	
+4: // Auto cycle activated
+	AutoCycle := 1;
+	
+	IF NOT StopPB THEN
+		State := 3;
+	END_IF
+
+5: // Manual mode
+	ManualMode := 1;
+
+	IF NOT ManualKeySW THEN
+		State := 1;
+	END_IF
+	
+END_CASE
+
+// Switch to initial state when Emergency stop has been activated.
+IF NOT SafetyOk THEN
+	State := 0;
+END_IF
+
+
+
+//===============================================================================================
+// Clock pulse
+//===============================================================================================
+PulseONTime(IN:= NOT PulseOFFTime.Q, PT:= T#500MS, Q=> ClockPulse, ET=> );
+PulseOFFTime(IN:= PulseONTime.Q, PT:= T#500MS, Q=> , ET=> );
+
+
+
+
+
+//===============================================================================================
+// Physical outputs - Operator console
+//===============================================================================================
+
+// Reset PB indicator flashes when the machine requires reset/homing.
+// It is ON solid when the machine homing is in progress, and OFF in all other states of the system.
+ResetIndicator := State = 1 AND ClockPulse OR  State = 2;
+
+
+// Start PB indicator flashes when the machine is ready for the workcycle to be started.
+// It is ON solid when machine workcycle is in progress and OFF in all other states of the system.
+StartIndicator := State = 3 AND ClockPulse OR State = 4;
+
+
+// Console indicator 1 is ON solid when Servo Enable is activated.
+Q1Indicator := ServosEnable;
+
+// Console indicator 2 is ON solid when Manual is activated.
+// Console indicator 2 flashes when manual keyswitch is switched to manual during autocycle
+Q2Indicator := State = 1 AND ClockPulse OR State = 5;
+
+
+
+
+
+
+//===============================================================================================
+// Physical outputs - Signal tower
+//===============================================================================================
+
+// Red signal tower is ON solid when safety is not activated
+//RedTower := State = 0 OR State = 5 AND ClockPulse;
+
+
+// Yellow signal tower is ON solid when the machine is ready to start preparation for starting and when preparation has been completed.
+// Yellow signal tower flashes when homing/reset is in progress
+//YellowTower :=  State = 1 OR State = 2 AND ClockPulse OR state = 3;
+
+// Green signal tower is ON when Auto Cycle is activated
+//GreenTower := State = 4;
+]]></ST>
+    </Implementation>
+    <LineIds Name="fbControl">
+      <LineId Id="296" Count="0" />
+      <LineId Id="299" Count="2" />
+      <LineId Id="297" Count="0" />
+      <LineId Id="123" Count="13" />
+      <LineId Id="232" Count="0" />
+      <LineId Id="137" Count="3" />
+      <LineId Id="233" Count="0" />
+      <LineId Id="141" Count="2" />
+      <LineId Id="234" Count="0" />
+      <LineId Id="144" Count="6" />
+      <LineId Id="235" Count="1" />
+      <LineId Id="152" Count="37" />
+      <LineId Id="445" Count="0" />
+      <LineId Id="454" Count="1" />
+      <LineId Id="238" Count="1" />
+      <LineId Id="456" Count="0" />
+      <LineId Id="442" Count="0" />
+      <LineId Id="237" Count="0" />
+      <LineId Id="457" Count="3" />
+      <LineId Id="443" Count="0" />
+      <LineId Id="293" Count="2" />
+      <LineId Id="78" Count="0" />
+      <LineId Id="331" Count="0" />
+      <LineId Id="193" Count="0" />
+      <LineId Id="192" Count="0" />
+      <LineId Id="330" Count="0" />
+      <LineId Id="328" Count="0" />
+      <LineId Id="332" Count="0" />
+      <LineId Id="329" Count="0" />
+      <LineId Id="327" Count="0" />
+      <LineId Id="447" Count="1" />
+      <LineId Id="194" Count="0" />
+      <LineId Id="80" Count="3" />
+      <LineId Id="34" Count="0" />
+      <LineId Id="449" Count="4" />
+      <LineId Id="310" Count="0" />
+      <LineId Id="396" Count="1" />
+      <LineId Id="311" Count="0" />
+      <LineId Id="313" Count="3" />
+      <LineId Id="320" Count="1" />
+      <LineId Id="323" Count="3" />
+      <LineId Id="309" Count="0" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

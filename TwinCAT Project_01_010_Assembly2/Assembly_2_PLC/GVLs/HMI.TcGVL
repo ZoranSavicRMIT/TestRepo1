@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+  <GVL Name="HMI" Id="{c5404d19-0cca-47dd-9036-420efde47392}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+VAR_GLOBAL
+
+	DoorUnlockCmd	: BOOL;
+	
+END_VAR]]></Declaration>
+  </GVL>
+</TcPlcObject>

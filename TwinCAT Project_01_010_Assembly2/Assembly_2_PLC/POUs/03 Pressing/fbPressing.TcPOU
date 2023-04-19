@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+  <POU Name="fbPressing" Id="{bc34757d-9fed-470c-8097-6f136cd894a9}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK fbPressing
+VAR_INPUT
+	SafetyOk			: BOOL;
+	ResetCmd			: BOOL;
+	AutoCycle			: BOOL;
+	ManualCmd			: BOOL;
+END_VAR
+VAR_OUTPUT
+	ResetCompleted 		: BOOL;
+		
+END_VAR
+VAR
+	
+	ForceReached			AT %I* :BOOL;
+	
+	AdvancePress			AT %Q* :BOOL;
+	
+	State					: INT := 0;
+
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <LineIds Name="fbPressing">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

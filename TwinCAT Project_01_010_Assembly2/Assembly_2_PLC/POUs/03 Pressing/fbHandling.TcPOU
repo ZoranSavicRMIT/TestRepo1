@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+  <POU Name="fbHandling" Id="{ed6f1448-b27f-4f77-963d-6890ef2263a1}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK fbHandling
+VAR_INPUT
+	SafetyOk			: BOOL;
+	ResetCmd			: BOOL;
+	AutoCycle			: BOOL;
+	ManualCmd			: BOOL;
+	
+END_VAR
+VAR_OUTPUT
+	ResetCompleted 		: BOOL;
+	
+END_VAR
+VAR
+	WpInGripper				AT %I* :BOOL;
+	LinearAtCentre			AT %I* :BOOL;
+	LinearAtExit			AT %I* :BOOL;
+	RotaryAtPickup			AT %I* :BOOL;
+	RotaryAtPress			AT %I* :BOOL;
+	RotaryAtDropoff			AT %I* :BOOL;
+
+	CloseGripper			AT %Q* :BOOL;
+	LinearToExit			AT %Q* :BOOL;
+	LinearToCentre			AT %Q* :BOOL;
+	RotaryToPickup			AT %Q* :BOOL;
+	RotaryToPress			AT %Q* :BOOL;
+	RotaryToDropoff			AT %Q* :BOOL;
+	
+	
+	State				: INT := 0;
+
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <LineIds Name="fbHandling">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

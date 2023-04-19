@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+  <POU Name="fbHousingDelivery" Id="{3ecd5b71-49eb-462d-8df3-a0db8522b28c}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK fbHousingDelivery
+VAR_INPUT
+	SafetyOk			: BOOL;
+	ResetCmd			: BOOL;
+	AutoCycle			: BOOL;
+	ManualCmd			: BOOL;
+END_VAR
+VAR_OUTPUT
+	ResetCompleted 		: BOOL;
+	
+END_VAR
+VAR
+	
+
+	WpAtStart			AT %I* :BOOL;
+	WpAtPlacing			AT %I* :BOOL;
+	
+	FwdConveyor			AT %Q* :BOOL;
+	AdvanceGate1		AT %Q* :BOOL;
+	RetractGate2		AT %Q* :BOOL;
+	
+	State				: INT := 0;
+
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <LineIds Name="fbHousingDelivery">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

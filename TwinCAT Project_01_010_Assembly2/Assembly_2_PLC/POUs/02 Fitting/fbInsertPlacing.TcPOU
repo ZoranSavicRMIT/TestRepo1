@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+  <POU Name="fbInsertPlacing" Id="{0c26fe6f-1d79-40f6-b13d-60acb1ec8f89}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK fbInsertPlacing
+VAR_INPUT
+	SafetyOk			: BOOL;
+	ResetCmd			: BOOL;
+	AutoCycle			: BOOL;
+	ManualCmd			: BOOL;
+	
+END_VAR
+VAR_OUTPUT
+	ResetCompleted 		: BOOL;
+	
+END_VAR
+VAR
+	
+	WpAvailable			AT %I* :BOOL;
+	WpVacGripped		AT %I* :BOOL;
+	SlideYRetracted		AT %I* :BOOL;
+	SlideYExtended		AT %I* :BOOL;
+	SlideZUp			AT %I* :BOOL;
+	
+	
+	AdvanceSlideY		AT %Q* :BOOL;
+	RetractSlideY		AT %Q* :BOOL;
+	LowerSlideZ			AT %Q* :BOOL;
+	VacuumOn			AT %Q* :BOOL;
+	
+	State				: INT := 0;
+
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <LineIds Name="fbInsertPlacing">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>
